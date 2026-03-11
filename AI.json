@@ -1,0 +1,328 @@
+{
+  "metadata": {
+    "name": "ww-input-basic",
+    "description": "A versatile form input element supporting text, email, password, number, decimal, date, time, phone, color, and currency types with validation.",
+    "keywords": [
+      "input",
+      "text input",
+      "form field",
+      "text field"
+    ],
+    "features": [
+      "Multiple input types (text, textarea, email, password, number, decimal, date, time, tel, color, currency)",
+      "Currency formatting with symbol, separators, decimal places",
+      "Debounce support",
+      "Custom validation",
+      "Min/max constraints for numbers and dates",
+      "Placeholder with multi-language support",
+      "Read-only and required states",
+      "Password visibility toggle",
+      "Textarea with configurable rows and resize"
+    ]
+  },
+  "properties": [
+    {
+      "name": "initValue",
+      "wewebName": "value",
+      "description": "Initial value of the input",
+      "type": "string",
+      "defaultValue": ""
+    },
+    {
+      "name": "type",
+      "description": "Input type",
+      "type": "string",
+      "options": [
+        "text",
+        "textarea",
+        "email",
+        "search",
+        "password",
+        "number",
+        "decimal",
+        "date",
+        "time",
+        "tel",
+        "color",
+        "currency"
+      ],
+      "defaultValue": "text"
+    },
+    {
+      "name": "placeholder",
+      "description": "Placeholder text. Supports multi-language object.",
+      "type": "object",
+      "defaultValue": {}
+    },
+    {
+      "name": "placeholderColor",
+      "description": "Color of the placeholder text",
+      "type": "string",
+      "responsive": true
+    },
+    {
+      "name": "readonly",
+      "description": "Whether the input is read-only",
+      "type": "boolean",
+      "defaultValue": false
+    },
+    {
+      "name": "required",
+      "description": "Whether the input is required",
+      "type": "boolean",
+      "defaultValue": true
+    },
+    {
+      "name": "debounce",
+      "description": "Enable debounce on value changes",
+      "type": "boolean",
+      "defaultValue": false
+    },
+    {
+      "name": "debounceDelay",
+      "description": "Debounce delay (1-5000ms)",
+      "type": "string",
+      "defaultValue": "500ms",
+      "responsive": true
+    },
+    {
+      "name": "autocomplete",
+      "description": "Enable browser autocomplete",
+      "type": "boolean",
+      "defaultValue": false
+    },
+    {
+      "name": "min",
+      "description": "Minimum value for number/decimal types",
+      "type": "number",
+      "defaultValue": 0
+    },
+    {
+      "name": "max",
+      "description": "Maximum value for number/decimal types",
+      "type": "number",
+      "defaultValue": 10000
+    },
+    {
+      "name": "minDate",
+      "description": "Minimum date in yyyy-mm-dd format",
+      "type": "string",
+      "defaultValue": ""
+    },
+    {
+      "name": "maxDate",
+      "description": "Maximum date in yyyy-mm-dd format",
+      "type": "string",
+      "defaultValue": ""
+    },
+    {
+      "name": "step",
+      "description": "Step increment for number/decimal types",
+      "type": "number",
+      "defaultValue": 1
+    },
+    {
+      "name": "precision",
+      "description": "Decimal precision for decimal type",
+      "type": "string",
+      "options": [
+        "0.1",
+        "0.01",
+        "0.001",
+        "0.0001",
+        "0.00001",
+        "0.000001",
+        "0.0000001",
+        "0.00000001"
+      ],
+      "defaultValue": "0.1"
+    },
+    {
+      "name": "timePrecision",
+      "description": "Time precision: 3600 (hh), 60 (hh:mm), 1 (hh:mm:ss), 0.1 (hh:mm:ss.s)",
+      "type": "number",
+      "options": [
+        3600,
+        60,
+        1,
+        0.1
+      ],
+      "defaultValue": 1
+    },
+    {
+      "name": "rows",
+      "description": "Number of rows for textarea type",
+      "type": "number",
+      "defaultValue": 4
+    },
+    {
+      "name": "resize",
+      "description": "Allow textarea resize",
+      "type": "boolean",
+      "defaultValue": false
+    },
+    {
+      "name": "displayPassword",
+      "description": "Show/hide password toggle",
+      "type": "boolean",
+      "defaultValue": false
+    },
+    {
+      "name": "hideArrows",
+      "description": "Hide number input arrows",
+      "type": "boolean",
+      "defaultValue": false
+    },
+    {
+      "name": "currencyShowSymbol",
+      "description": "Show currency symbol",
+      "type": "boolean",
+      "defaultValue": true
+    },
+    {
+      "name": "currencySymbol",
+      "description": "Currency symbol character",
+      "type": "string",
+      "defaultValue": "$"
+    },
+    {
+      "name": "currencySymbolPosition",
+      "description": "Currency symbol position: before or after",
+      "type": "string",
+      "options": [
+        "prefix",
+        "suffix"
+      ],
+      "defaultValue": "prefix"
+    },
+    {
+      "name": "currencyDecimalPlaces",
+      "description": "Number of decimal places for currency",
+      "type": "number",
+      "defaultValue": 2
+    },
+    {
+      "name": "currencyThousandsSeparator",
+      "description": "Thousands separator character",
+      "type": "string",
+      "options": [
+        ",",
+        ".",
+        " ",
+        "'",
+        ""
+      ],
+      "defaultValue": ","
+    },
+    {
+      "name": "currencyDecimalSeparator",
+      "description": "Decimal separator character",
+      "type": "string",
+      "options": [
+        ".",
+        ","
+      ],
+      "defaultValue": "."
+    },
+    {
+      "name": "currencySymbolColor",
+      "description": "Color of the currency symbol",
+      "type": "string",
+      "defaultValue": "#666666"
+    },
+    {
+      "name": "currencySymbolFontSize",
+      "description": "Font size of the currency symbol",
+      "type": "string",
+      "defaultValue": "1em"
+    },
+    {
+      "name": "currencySymbolPadding",
+      "description": "Padding around the currency symbol",
+      "type": "string",
+      "defaultValue": "4px"
+    },
+    {
+      "name": "fieldName",
+      "description": "Field name used for form data when inside a form container",
+      "type": "string",
+      "defaultValue": ""
+    },
+    {
+      "name": "customValidation",
+      "description": "Enable custom validation formula",
+      "type": "boolean",
+      "defaultValue": false
+    },
+    {
+      "name": "validation",
+      "description": "Custom validation formula",
+      "type": "formula",
+      "defaultValue": ""
+    }
+  ],
+  "states": [
+    {
+      "name": "focus",
+      "description": "Input has focus"
+    },
+    {
+      "name": "readonly",
+      "description": "Input is read-only"
+    }
+  ],
+  "events": [
+    {
+      "name": "change",
+      "description": "Triggered when the input value changes",
+      "payload": {
+        "value": "string"
+      }
+    },
+    {
+      "name": "initValueChange",
+      "description": "Triggered when the initial bound value changes",
+      "payload": {
+        "value": "string"
+      }
+    },
+    {
+      "name": "onEnterKey",
+      "description": "Triggered when the Enter key is pressed",
+      "payload": {
+        "value": "string"
+      }
+    },
+    {
+      "name": "focus",
+      "description": "Triggered when the input receives focus"
+    },
+    {
+      "name": "blur",
+      "description": "Triggered when the input loses focus"
+    }
+  ],
+  "actions": [
+    {
+      "label": "Focus element",
+      "actionName": "focusInput",
+      "description": "Programmatically focus the input element"
+    }
+  ],
+  "slots": [],
+  "variables": [
+    {
+      "name": "value",
+      "description": "The currentvalue of the input",
+      "type": "string"
+    }
+  ],
+  "specifications": [
+    "Inherits text properties from ww-text",
+    "Use type 'textarea' for multi-line input",
+    "Date constraints use yyyy-mm-dd format",
+    "Currency type provides formatted number input with symbol display",
+    "Inside a form container, set fieldName for form data binding"
+  ],
+  "examples": []
+}
