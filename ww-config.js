@@ -62,7 +62,7 @@ export default {
     states: ['focus', 'readonly'],
     actions: [{ label: 'Focus element', action: 'focusInput' }],
     triggerEvents: [
-        { name: 'change', label: { en: 'On change' }, event: { value: '' }, default: true, description: "Run when the value changes." },
+        { name: 'change', label: { en: 'On change' }, event: { value: '' }, default: true, description: "Run when the user types in the input." },
         { name: 'initValueChange', label: { en: 'On init value change' }, event: { value: '' }, description: "Run when the initial value changes." },
         { name: 'onEnterKey', label: { en: 'On enter key' }, event: { value: '' }, description: "Run when the Enter key is pressed." },
         { name: 'focus', label: { en: 'On focus' }, event: null, description: "Run when the input becomes active (for example, when clicked)." },
