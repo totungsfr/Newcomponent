@@ -7,6 +7,13 @@ export default {
         { name: 'change', label: { en: 'On change' }, event: { value: '' }, default: true },
     ],
     properties: {
+        blockCode: {
+            label: { en: 'Block code', fr: 'Code bloc' },
+            type: 'Text',
+            section: 'settings',
+            bindable: true,
+            defaultValue: '',
+        },
         displayJson: {
             label: { en: 'Display JSON', fr: 'JSON Affichage' },
             type: 'Text',
@@ -19,7 +26,7 @@ export default {
             type: 'Text',
             section: 'settings',
             bindable: true,
-            defaultValue: '{"type":"free_text","lines":3}',
+            defaultValue: '{}',
         },
         lang: {
             label: { en: 'Language', fr: 'Langue' },

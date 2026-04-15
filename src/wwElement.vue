@@ -19,7 +19,7 @@
     <!-- Saisie libre longue -->
     <textarea
       v-else-if="questionType === 'question_text_long' || questionType === 'free_text'"
-      :rows="reponseJson.lines || 3"
+      :rows="3"
       v-model="currentValue"
       @input="emitValue"
       style="width:100%; padding:6px; border:1px solid #555; border-radius:4px; color:#333; background:var(--Color-AdoptinViolet1); font-size:11px; display:block;"
@@ -75,11 +75,11 @@
          style="display:flex; gap:16px; padding:4px; align-items:center;">
       <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px;">
         <input type="radio" value="yes" v-model="currentValue" @change="emitValue" />
-        {{ lang === 'fr' ? 'Oui' : 'Yes' }}
+        {{ lang === 'fr' ? (displayJson.labels && displayJson.labels.yes_fr || 'Oui') : (displayJson.labels && displayJson.labels.yes_en || 'Yes') }}
       </label>
       <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px;">
         <input type="radio" value="no" v-model="currentValue" @change="emitValue" />
-        {{ lang === 'fr' ? 'Non' : 'No' }}
+        {{ lang === 'fr' ? (displayJson.labels && displayJson.labels.no_fr || 'Non') : (displayJson.labels && displayJson.labels.no_en || 'No') }}
       </label>
     </div>
 
@@ -88,11 +88,11 @@
       <div style="display:flex; gap:16px; align-items:center; margin-bottom:6px;">
         <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px;">
           <input type="radio" value="yes" v-model="currentValue" @change="emitYesNoComment" />
-          {{ lang === 'fr' ? 'Oui' : 'Yes' }}
+          {{ lang === 'fr' ? (displayJson.labels && displayJson.labels.yes_fr || 'Oui') : (displayJson.labels && displayJson.labels.yes_en || 'Yes') }}
         </label>
         <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px;">
           <input type="radio" value="no" v-model="currentValue" @change="emitYesNoComment" />
-          {{ lang === 'fr' ? 'Non' : 'No' }}
+          {{ lang === 'fr' ? (displayJson.labels && displayJson.labels.no_fr || 'Non') : (displayJson.labels && displayJson.labels.no_en || 'No') }}
         </label>
       </div>
       <input
@@ -182,7 +182,10 @@ export default {
       try { return JSON.parse(val); } catch { return {}; }
     });
 
-    const questionType = computed(() => reponseJson.value.type || 'free_text');
+    // Type vient de blockCode en priorité
+    const questionType = computed(() => 
+      props.content.blockCode || reponseJson.value.type || 'free_text'
+    );
 
     function emitValue() {
       emit('trigger-event', {
