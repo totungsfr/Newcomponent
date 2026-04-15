@@ -1,5 +1,11 @@
 <template>
-  <div style="width:100%; font-family:inherit; box-sizing:border-box;">
+  <div style="width:100%; font-family:inherit; box-sizing:border-box; font-size:11px;">
+
+    <!-- Question depuis display_json -->
+    <div v-if="displayJson && (displayJson.question_fr || displayJson.question_en)"
+         style="font-weight:bold; margin-bottom:6px; color:#333; font-size:11px;">
+      {{ lang === 'fr' ? displayJson.question_fr : displayJson.question_en }}
+    </div>
 
     <!-- Saisie libre -->
     <textarea
@@ -7,11 +13,11 @@
       :rows="reponseJson.lines || 3"
       v-model="currentValue"
       @input="emitValue"
-      style="width:100%; padding:8px; border:2px solid #555; border-radius:4px; color:#333; background:#fff; font-size:14px; display:block;"
+      style="width:100%; padding:6px; border:1px solid #555; border-radius:4px; color:#333; background:#fff; font-size:11px; display:block;"
     />
 
     <!-- Slider -->
-    <div v-else-if="questionType === 'slider'" style="display:flex; align-items:center; gap:12px;">
+    <div v-else-if="questionType === 'slider'" style="display:flex; align-items:center; gap:8px;">
       <input
         type="range"
         :min="reponseJson.min || 0"
@@ -20,40 +26,35 @@
         @input="emitValue"
         style="width:100%;"
       />
-      <span style="color:#333; min-width:30px;">{{ currentValue }}</span>
+      <span style="color:#333; min-width:24px; font-size:11px;">{{ currentValue }}</span>
     </div>
 
     <!-- Choix unique -->
-    <div v-else-if="questionType === 'single_choice'" style="padding:8px;">
+    <div v-else-if="questionType === 'single_choice'" style="padding:4px;">
       <div
         v-for="choice in reponseJson.choices"
         :key="choice.uuid"
-        style="padding:4px; color:#333; display:flex; align-items:center; gap:8px;"
+        style="padding:2px; color:#333; display:flex; align-items:center; gap:6px;"
       >
-        <input
-          type="radio"
-          :value="choice.uuid"
-          v-model="currentValue"
-          @change="emitValue"
-        />
-        <span style="color:#333;">{{ choice.label ? choice.label.fr : '' }}</span>
+        <input type="radio" :value="choice.uuid" v-model="currentValue" @change="emitValue" />
+        <span style="color:#333; font-size:11px;">{{ choice.label ? choice.label.fr : '' }}</span>
       </div>
     </div>
 
     <!-- Vrai / Faux -->
-    <div v-else-if="questionType === 'true_false'" style="display:flex; gap:16px; padding:8px;">
-      <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:#333; font-size:14px;">
+    <div v-else-if="questionType === 'true_false'" style="display:flex; gap:12px; padding:4px;">
+      <label style="display:flex; align-items:center; gap:6px; cursor:pointer; color:#333; font-size:11px;">
         <input type="radio" value="true" v-model="currentValue" @change="emitValue" />
         {{ lang === 'fr' ? 'Vrai' : 'True' }}
       </label>
-      <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:#333; font-size:14px;">
+      <label style="display:flex; align-items:center; gap:6px; cursor:pointer; color:#333; font-size:11px;">
         <input type="radio" value="false" v-model="currentValue" @change="emitValue" />
         {{ lang === 'fr' ? 'Faux' : 'False' }}
       </label>
     </div>
 
     <!-- Fallback -->
-    <div v-else style="color:#999; font-style:italic; font-size:14px; padding:8px;">
+    <div v-else style="color:#999; font-style:italic; font-size:11px; padding:4px;">
       Type non reconnu : {{ questionType }}
     </div>
 
@@ -77,20 +78,22 @@ export default {
     const lang = computed(() => props.content.lang || 'fr');
 
     const displayJson = computed(() => {
+      const val = props.content.displayJson;
+      if (!val) return {};
+      if (typeof val === 'object') return val;
       try {
-        return typeof props.content.displayJson === 'string'
-          ? JSON.parse(props.content.displayJson)
-          : props.content.displayJson || {};
+        return JSON.parse(val);
       } catch {
         return {};
       }
     });
 
     const reponseJson = computed(() => {
+      const val = props.content.reponseJson;
+      if (!val) return {};
+      if (typeof val === 'object') return val;
       try {
-        return typeof props.content.reponseJson === 'string'
-          ? JSON.parse(props.content.reponseJson)
-          : props.content.reponseJson || {};
+        return JSON.parse(val);
       } catch {
         return {};
       }
