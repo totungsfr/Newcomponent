@@ -25,10 +25,18 @@
 
     <!-- Choix unique -->
     <div v-else-if="questionType === 'single_choice'" style="padding:8px;">
-      <div style="color:red; font-size:16px; font-weight:bold;">TEXTE EN DUR VISIBLE</div>
-      <div v-for="choice in reponseJson.choices" :key="choice.uuid" style="padding:4px; color:#333;">
-        <input type="radio" :value="choice.uuid" v-model="currentValue" @change="emitValue" />
-        <span style="color:#333; padding-left:8px;">{{ choice.label ? choice.label.fr : 'pas de label' }}</span>
+      <div
+        v-for="choice in reponseJson.choices"
+        :key="choice.uuid"
+        style="padding:4px; color:#333; display:flex; align-items:center; gap:8px;"
+      >
+        <input
+          type="radio"
+          :value="choice.uuid"
+          v-model="currentValue"
+          @change="emitValue"
+        />
+        <span style="color:#333;">{{ choice.label ? choice.label.fr : '' }}</span>
       </div>
     </div>
 
@@ -90,13 +98,6 @@ export default {
 
     const questionType = computed(() => reponseJson.value.type || 'free_text');
 
-    function getLabel(obj, field) {
-      if (!obj) return '';
-      const target = field ? obj[field] : obj;
-      if (!target) return '';
-      return target[lang.value] || target['fr'] || target['en'] || '';
-    }
-
     function emitValue() {
       emit('trigger-event', {
         name: 'change',
@@ -110,7 +111,6 @@ export default {
       displayJson,
       reponseJson,
       questionType,
-      getLabel,
       emitValue,
     };
   },
