@@ -73,34 +73,33 @@
     <!-- Oui / Non -->
     <div v-else-if="questionType === 'question_yes_no'"
          style="display:flex; gap:16px; padding:4px; align-items:center;">
-      <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px;">
+      <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px; white-space:nowrap;">
         <input type="radio" value="yes" v-model="currentValue" @change="emitValue" />
         {{ lang === 'fr' ? (displayJson.labels && displayJson.labels.yes_fr || 'Oui') : (displayJson.labels && displayJson.labels.yes_en || 'Yes') }}
       </label>
-      <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px;">
+      <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px; white-space:nowrap;">
         <input type="radio" value="no" v-model="currentValue" @change="emitValue" />
         {{ lang === 'fr' ? (displayJson.labels && displayJson.labels.no_fr || 'Non') : (displayJson.labels && displayJson.labels.no_en || 'No') }}
       </label>
     </div>
 
-    <!-- Oui / Non + commentaire -->
-    <div v-else-if="questionType === 'question_yes_no_comment'" style="padding:4px;">
-      <div style="display:flex; gap:16px; align-items:center; margin-bottom:6px;">
-        <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px;">
-          <input type="radio" value="yes" v-model="currentValue" @change="emitYesNoComment" />
-          {{ lang === 'fr' ? (displayJson.labels && displayJson.labels.yes_fr || 'Oui') : (displayJson.labels && displayJson.labels.yes_en || 'Yes') }}
-        </label>
-        <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px;">
-          <input type="radio" value="no" v-model="currentValue" @change="emitYesNoComment" />
-          {{ lang === 'fr' ? (displayJson.labels && displayJson.labels.no_fr || 'Non') : (displayJson.labels && displayJson.labels.no_en || 'No') }}
-        </label>
-      </div>
+    <!-- Oui / Non + commentaire sur une ligne -->
+    <div v-else-if="questionType === 'question_yes_no_comment'"
+         style="display:flex; gap:12px; align-items:center; padding:4px;">
+      <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px; white-space:nowrap;">
+        <input type="radio" value="yes" v-model="currentValue" @change="emitYesNoComment" />
+        {{ lang === 'fr' ? (displayJson.labels && displayJson.labels.yes_fr || 'Oui') : (displayJson.labels && displayJson.labels.yes_en || 'Yes') }}
+      </label>
+      <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px; white-space:nowrap;">
+        <input type="radio" value="no" v-model="currentValue" @change="emitYesNoComment" />
+        {{ lang === 'fr' ? (displayJson.labels && displayJson.labels.no_fr || 'Non') : (displayJson.labels && displayJson.labels.no_en || 'No') }}
+      </label>
       <input
         type="text"
         v-model="commentValue"
         @input="emitYesNoComment"
         :placeholder="lang === 'fr' ? 'Commentaire...' : 'Comment...'"
-        style="width:100%; padding:6px; border:1px solid #555; border-radius:4px; color:#333; background:var(--Color-AdoptinViolet1); font-size:11px;"
+        style="flex:1; padding:4px; border:1px solid #555; border-radius:4px; color:#333; background:var(--Color-AdoptinViolet1); font-size:11px;"
       />
     </div>
 
@@ -141,9 +140,9 @@
       </table>
     </div>
 
-    <!-- Fallback -->
+    <!-- En cours de développement -->
     <div v-else style="color:#999; font-style:italic; font-size:11px; padding:4px;">
-      Type non reconnu : {{ questionType }}
+      En cours de développement : {{ questionType }}
     </div>
 
   </div>
@@ -182,8 +181,7 @@ export default {
       try { return JSON.parse(val); } catch { return {}; }
     });
 
-    // Type vient de blockCode en priorité
-    const questionType = computed(() => 
+    const questionType = computed(() =>
       props.content.blockCode || reponseJson.value.type || 'free_text'
     );
 
@@ -209,27 +207,4 @@ export default {
     }
 
     function updateCell(rowKey, colKey, value) {
-      tableCells[rowKey + '_' + colKey] = value;
-      emit('trigger-event', {
-        name: 'change',
-        event: { value: { ...tableCells } },
-      });
-    }
-
-    return {
-      currentValue,
-      multiValues,
-      commentValue,
-      tableCells,
-      lang,
-      displayJson,
-      reponseJson,
-      questionType,
-      emitValue,
-      emitMultiValue,
-      emitYesNoComment,
-      updateCell,
-    };
-  },
-};
-</script>
+      tableC
