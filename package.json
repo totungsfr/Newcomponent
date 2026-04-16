@@ -4,7 +4,7 @@
         "type": "git",
         "url": "https://github.com/weweb-assets/ww-form-input"
     },
-    "version": "3.3.4",
+    "version": "3.3.5",
     "scripts": {
         "build": "weweb build",
         "serve": "weweb serve"
@@ -17,5 +17,8 @@
         "eslint-plugin-vue": "7.0.0-beta.4",
         "prettier": "^2.1.2"
     },
-    "license": "MIT"
+    "license": "MIT",
+    "dependencies": {
+        "chart.js": "^4.5.1"
+    }
 }

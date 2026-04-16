@@ -140,6 +140,36 @@
       </table>
     </div>
 
+    <!-- Araignee -->
+    <div v-else-if="questionType === 'araignee'" style="width:100%; padding:4px;">
+      <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:16px;">
+        <div
+          v-for="dim in araigneeDimensions"
+          :key="dim.key"
+          style="display:flex; align-items:center; gap:12px;"
+        >
+          <span style="font-size:11px; color:#333; width:200px; flex-shrink:0;">
+            {{ lang === 'en' ? dim.label_en : dim.label_fr }}
+          </span>
+          <input
+            type="range"
+            min="1"
+            max="7"
+            step="1"
+            :value="araigneeValues[dim.key] || 4"
+            @input="onAraigneeInput(dim.key, $event.target.value)"
+            style="flex:1;"
+          />
+          <span style="font-size:11px; font-weight:500; color:#333; width:16px; text-align:right;">
+            {{ araigneeValues[dim.key] || 4 }}
+          </span>
+        </div>
+      </div>
+      <div style="position:relative; width:100%; max-width:400px; margin:0 auto;">
+        <canvas :id="'araignee-' + uid"></canvas>
+      </div>
+    </div>
+
     <!-- En cours de développement -->
     <div v-else style="color:#999; font-style:italic; font-size:11px; padding:4px;">
       En cours de développement : {{ questionType }}
@@ -149,7 +179,8 @@
 </template>
 
 <script>
-import { ref, computed, reactive } from 'vue';
+import { ref, computed, reactive, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+import Chart from 'chart.js/auto';
 
 export default {
   props: {
@@ -164,6 +195,8 @@ export default {
     const multiValues = ref([]);
     const commentValue = ref('');
     const tableCells = reactive({});
+    const araigneeValues = reactive({});
+    let chartInstance = null;
 
     const lang = computed(() => props.content.lang || 'fr');
 
@@ -185,26 +218,134 @@ export default {
       props.content.blockCode || reponseJson.value.type || 'free_text'
     );
 
-    function emitValue() {
+    // Araignee — dimensions depuis display_json
+    const araigneeDimensions = computed(() => {
+      if (questionType.value !== 'araignee') return [];
+      return displayJson.value?.dimensions || [];
+    });
+
+    function initAraigneeValues() {
+      araigneeDimensions.value.forEach(dim => {
+        araigneeValues[dim.key] = reponseJson.value?.[dim.key] || 4;
+      });
+    }
+
+    function emitAraigneeValue() {
+      const response = {};
+      araigneeDimensions.value.forEach(dim => {
+        response[dim.key] = araigneeValues[dim.key] || 4;
+      });
       emit('trigger-event', {
         name: 'change',
-        event: { value: currentValue.value },
+        event: { value: response },
       });
+    }
+
+    function onAraigneeInput(key, rawVal) {
+      araigneeValues[key] = parseInt(rawVal);
+      emitAraigneeValue();
+      updateChart();
+    }
+
+    function initChart() {
+      nextTick(() => {
+        const canvas = document.getElementById('araignee-' + props.uid);
+        if (!canvas) return;
+        if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+        const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const gridColor = isDark ? 'rgba(255,255,255,0.12)' : 'rgba(0,0,0,0.10)';
+        const tickColor = isDark ? 'rgba(255,255,255,0.45)' : 'rgba(0,0,0,0.45)';
+        const fillColor = isDark ? 'rgba(83,74,183,0.35)' : 'rgba(83,74,183,0.20)';
+        chartInstance = new Chart(canvas, {
+          type: 'radar',
+          data: {
+            labels: araigneeDimensions.value.map(d => lang.value === 'en' ? d.label_en : d.label_fr),
+            datasets: [{
+              data: araigneeDimensions.value.map(d => araigneeValues[d.key] || 4),
+              backgroundColor: fillColor,
+              borderColor: '#534AB7',
+              borderWidth: 2,
+              pointBackgroundColor: '#534AB7',
+              pointRadius: 4,
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: true,
+            plugins: { legend: { display: false } },
+            scales: {
+              r: {
+                min: 0, max: 7,
+                ticks: {
+                  stepSize: 1,
+                  color: tickColor,
+                  backdropColor: 'transparent',
+                  font: { size: 11 },
+                  callback: v => String(v),
+                },
+                grid: { color: gridColor },
+                angleLines: { color: gridColor },
+                pointLabels: {
+                  font: { size: 11 },
+                  color: isDark ? 'rgba(255,255,255,0.75)' : 'rgba(0,0,0,0.65)',
+                }
+              }
+            }
+          }
+        });
+      });
+    }
+
+    function updateChart() {
+      if (!chartInstance) return;
+      chartInstance.data.datasets[0].data =
+        araigneeDimensions.value.map(d => araigneeValues[d.key] || 4);
+      chartInstance.update();
+    }
+
+    // Fonctions existantes
+    function emitValue() {
+      emit('trigger-event', { name: 'change', event: { value: currentValue.value } });
     }
 
     function emitMultiValue() {
-      emit('trigger-event', {
-        name: 'change',
-        event: { value: multiValues.value },
-      });
+      emit('trigger-event', { name: 'change', event: { value: multiValues.value } });
     }
 
     function emitYesNoComment() {
-      emit('trigger-event', {
-        name: 'change',
-        event: { value: currentValue.value, comment: commentValue.value },
-      });
+      emit('trigger-event', { name: 'change', event: { value: currentValue.value, comment: commentValue.value } });
     }
 
     function updateCell(rowKey, colKey, value) {
-      tableC
+      tableCells[rowKey + '_' + colKey] = value;
+      emit('trigger-event', { name: 'change', event: { value: { ...tableCells } } });
+    }
+
+    onMounted(() => {
+      if (questionType.value === 'araignee') {
+        initAraigneeValues();
+        initChart();
+      }
+    });
+
+    watch(questionType, (val) => {
+      if (val === 'araignee') {
+        initAraigneeValues();
+        initChart();
+      }
+    });
+
+    onBeforeUnmount(() => {
+      if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
+    });
+
+    return {
+      currentValue, multiValues, commentValue, tableCells,
+      lang, displayJson, reponseJson, questionType,
+      araigneeDimensions, araigneeValues,
+      emitValue, emitMultiValue, emitYesNoComment, updateCell,
+      onAraigneeInput,
+    };
+  },
+};
+</script>
