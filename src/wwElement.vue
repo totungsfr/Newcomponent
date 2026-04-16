@@ -1,6 +1,10 @@
 <template>
   <div style="width:100%; font-family:inherit; box-sizing:border-box; font-size:11px;">
 
+<div style="font-size:10px; color:red;">
+  QT={{ questionType }} | UID={{ uid }}
+</div>
+
     <div v-if="displayJson && (displayJson.question_fr || displayJson.question_en)"
          style="font-weight:bold; margin-bottom:6px; color:#333; font-size:11px;">
       {{ lang === 'fr' ? displayJson.question_fr : displayJson.question_en }}
