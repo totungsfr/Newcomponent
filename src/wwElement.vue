@@ -1,13 +1,11 @@
 <template>
   <div style="width:100%; font-family:inherit; box-sizing:border-box; font-size:11px;">
 
-    <!-- Question depuis display_json -->
     <div v-if="displayJson && (displayJson.question_fr || displayJson.question_en)"
          style="font-weight:bold; margin-bottom:6px; color:#333; font-size:11px;">
       {{ lang === 'fr' ? displayJson.question_fr : displayJson.question_en }}
     </div>
 
-    <!-- Saisie libre courte -->
     <input
       v-if="questionType === 'question_text_short'"
       type="text"
@@ -16,7 +14,6 @@
       style="width:100%; padding:6px; border:1px solid #555; border-radius:4px; color:#333; background:var(--Color-AdoptinViolet1); font-size:11px; display:block;"
     />
 
-    <!-- Saisie libre longue -->
     <textarea
       v-else-if="questionType === 'question_text_long' || questionType === 'free_text'"
       :rows="3"
@@ -25,7 +22,6 @@
       style="width:100%; padding:6px; border:1px solid #555; border-radius:4px; color:#333; background:var(--Color-AdoptinViolet1); font-size:11px; display:block;"
     />
 
-    <!-- Slider -->
     <div v-else-if="questionType === 'question_scale_single' || questionType === 'slider'"
          style="display:flex; align-items:center; gap:8px;">
       <input
@@ -39,7 +35,6 @@
       <span style="color:#333; min-width:24px; font-size:11px;">{{ currentValue }}</span>
     </div>
 
-    <!-- Choix unique -->
     <div v-else-if="questionType === 'question_single_choice' || questionType === 'single_choice'"
          style="display:flex; flex-wrap:wrap; gap:6px; padding:4px;">
       <div
@@ -52,7 +47,6 @@
       </div>
     </div>
 
-    <!-- Choix multiple -->
     <div v-else-if="questionType === 'question_multi_choice'"
          style="display:flex; flex-wrap:wrap; gap:6px; padding:4px;">
       <div
@@ -70,7 +64,6 @@
       </div>
     </div>
 
-    <!-- Oui / Non -->
     <div v-else-if="questionType === 'question_yes_no'"
          style="display:flex; gap:16px; padding:4px; align-items:center;">
       <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px; white-space:nowrap;">
@@ -83,7 +76,6 @@
       </label>
     </div>
 
-    <!-- Oui / Non + commentaire sur une ligne -->
     <div v-else-if="questionType === 'question_yes_no_comment'"
          style="display:flex; gap:12px; align-items:center; padding:4px;">
       <label style="display:flex; align-items:center; gap:4px; cursor:pointer; color:#333; font-size:11px; white-space:nowrap;">
@@ -103,7 +95,6 @@
       />
     </div>
 
-    <!-- Tableau -->
     <div v-else-if="questionType === 'question_table'" style="padding:4px; overflow-x:auto;">
       <table style="width:100%; border-collapse:collapse; font-size:11px;">
         <thead>
@@ -140,7 +131,6 @@
       </table>
     </div>
 
-    <!-- Araignee -->
     <div v-else-if="questionType === 'araignee'" style="width:100%; padding:4px;">
       <div style="display:flex; flex-direction:column; gap:6px; margin-bottom:16px;">
         <div
@@ -170,7 +160,6 @@
       </div>
     </div>
 
-    <!-- En cours de développement -->
     <div v-else style="color:#999; font-style:italic; font-size:11px; padding:4px;">
       En cours de développement : {{ questionType }}
     </div>
@@ -179,7 +168,7 @@
 </template>
 
 <script>
-import { ref, computed, reactive, onMounted, onBeforeUnmount, watch, nextTick } from 'vue';
+import { ref, computed, reactive, watch, onBeforeUnmount, nextTick } from 'vue';
 import Chart from 'chart.js/auto';
 
 export default {
@@ -218,9 +207,7 @@ export default {
       props.content.blockCode || reponseJson.value.type || 'free_text'
     );
 
-    // Araignee — dimensions depuis display_json
     const araigneeDimensions = computed(() => {
-      if (questionType.value !== 'araignee') return [];
       return displayJson.value?.dimensions || [];
     });
 
@@ -235,10 +222,7 @@ export default {
       araigneeDimensions.value.forEach(dim => {
         response[dim.key] = araigneeValues[dim.key] || 4;
       });
-      emit('trigger-event', {
-        name: 'change',
-        event: { value: response },
-      });
+      emit('trigger-event', { name: 'change', event: { value: response } });
     }
 
     function onAraigneeInput(key, rawVal) {
@@ -303,7 +287,13 @@ export default {
       chartInstance.update();
     }
 
-    // Fonctions existantes
+    watch(questionType, (val) => {
+      if (val === 'araignee') {
+        initAraigneeValues();
+        initChart();
+      }
+    }, { immediate: true });
+
     function emitValue() {
       emit('trigger-event', { name: 'change', event: { value: currentValue.value } });
     }
@@ -320,20 +310,6 @@ export default {
       tableCells[rowKey + '_' + colKey] = value;
       emit('trigger-event', { name: 'change', event: { value: { ...tableCells } } });
     }
-
-    onMounted(() => {
-      if (questionType.value === 'araignee') {
-        initAraigneeValues();
-        initChart();
-      }
-    });
-
-    watch(questionType, (val) => {
-      if (val === 'araignee') {
-        initAraigneeValues();
-        initChart();
-      }
-    });
 
     onBeforeUnmount(() => {
       if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
