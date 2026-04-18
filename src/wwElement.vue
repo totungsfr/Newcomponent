@@ -2,13 +2,13 @@
   <div style="width:100%; font-family:inherit; box-sizing:border-box; font-size:11px;">
 
     <div v-if="questionType === 'araignee'" style="width:100%; padding:4px;">
-      <div style="display:flex; flex-direction:column; gap:3px; margin-bottom:12px;">
+      <div style="display:flex; flex-direction:column; gap:2px; margin-bottom:4px;">
         <div
           v-for="dim in araigneeDimensions"
           :key="dim.key"
           style="display:flex; align-items:center; gap:8px;"
         >
-          <span style="font-size:10px; color:#555; width:160px; flex-shrink:0;">
+          <span style="font-size:10px; font-weight:bold; color:#555; width:160px; flex-shrink:0;">
             {{ lang === 'en' ? dim.label_en : dim.label_fr }}
           </span>
           <input
@@ -18,14 +18,14 @@
             step="1"
             :value="araigneeValues[dim.key]"
             @input="onAraigneeInput(dim.key, $event.target.value)"
-            style="flex:1; height:3px;"
+            style="width:120px; flex-shrink:0;"
           />
-          <span style="font-size:10px; font-weight:500; color:#555; width:12px; text-align:right;">
+          <span style="font-size:10px; font-weight:bold; color:#555; width:12px; text-align:right;">
             {{ araigneeValues[dim.key] }}
           </span>
         </div>
       </div>
-      <div style="position:relative; width:100%; max-width:600px; margin:0 auto;">
+      <div style="position:relative; width:100%; max-width:500px; margin:0 auto;">
         <canvas :id="'araignee-' + uid"></canvas>
       </div>
     </div>
@@ -106,13 +106,13 @@ export default {
                 stepSize: 1,
                 color: '#555',
                 backdropColor: 'transparent',
-                font: { size: 10 },
+                font: { size: 10, weight: 'bold' },
                 callback: v => String(v),
               },
               grid: { color: 'rgba(0,0,0,0.10)' },
               angleLines: { color: 'rgba(0,0,0,0.10)' },
               pointLabels: {
-                font: { size: 11 },
+                font: { size: 11, weight: 'bold' },
                 color: '#333',
               }
             }
